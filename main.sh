@@ -254,7 +254,7 @@ install_cargo_binstall() {
         else
             warn "cargo-binstall should be installed at ${bin_dir:-}/cargo-binstall${exe}; but cargo-binstall${exe} not found in path"
         fi
-        rx "cargo-binstall${exe}" binstall -V
+        rx "${installed_at:-"cargo-binstall${exe}"}" binstall -V
     fi
 }
 apt_update() {
@@ -691,8 +691,9 @@ if [[ ${#unsupported_tools[@]} -gt 0 ]]; then
     info "install-action does not support ${unsupported_tools[*]}; fallback to cargo-binstall"
     IFS=$'\n\t'
     install_cargo_binstall
+    installed_at=$(type -P "cargo-binstall${exe}" || echo "")
     # By default, cargo-binstall enforce downloads over secure transports only.
     # As a result, http will be disabled, and it will also set
     # min tls version to be 1.2
-    cargo binstall --force --no-confirm --locked "${unsupported_tools[@]}"
+    rx "${installed_at:-"cargo-binstall${exe}"}" binstall --force --no-confirm --locked "${unsupported_tools[@]}"
 fi
