@@ -10,6 +10,540 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+## [2.32.1] - 2024-04-01
+
+- Update `cargo-hack@latest` to 0.6.26.
+
+## [2.32.0] - 2024-04-01
+
+- Support `hyperfine`. ([#425](https://github.com/taiki-e/install-action/pull/425), thanks @jayvdb)
+
+- Support `editorconfig-checker`. ([#430](https://github.com/taiki-e/install-action/pull/430), thanks @jayvdb)
+
+- Update `cargo-hack@latest` to 0.6.24.
+
+## [2.31.3] - 2024-03-30
+
+- Update `git-cliff@latest` to 2.2.0.
+
+## [2.31.2] - 2024-03-28
+
+- Fix `cargo-spellcheck` installation bug. ([#428](https://github.com/taiki-e/install-action/pull/428))
+
+## [2.31.1] - 2024-03-28
+
+- Update `protoc@latest` to 3.26.1.
+
+## [2.31.0] - 2024-03-27
+
+- Support `typos`. ([#422](https://github.com/taiki-e/install-action/pull/422), thanks @jayvdb)
+
+- Support `cargo-spellcheck`. ([#423](https://github.com/taiki-e/install-action/pull/423), thanks @jayvdb)
+
+## [2.30.0] - 2024-03-27
+
+- Support `cargo-cyclonedx`. ([#424](https://github.com/taiki-e/install-action/pull/424), thanks @jayvdb)
+
+- Update `cargo-hack@latest` to 0.6.23.
+
+## [2.29.8] - 2024-03-26
+
+- Update `syft@latest` to 1.1.0.
+
+- Update `biome@latest` to 1.6.3.
+
+## [2.29.7] - 2024-03-24
+
+- Update `cargo-machete@latest` to 0.6.2.
+
+## [2.29.6] - 2024-03-23
+
+- Update `cargo-deny@latest` to 0.14.20.
+
+## [2.29.5] - 2024-03-22
+
+- Update `biome@latest` to 1.6.2.
+
+## [2.29.4] - 2024-03-22
+
+- Update `cargo-deny@latest` to 0.14.19.
+
+## [2.29.3] - 2024-03-21
+
+- Update `cargo-deny@latest` to 0.14.18.
+
+## [2.29.2] - 2024-03-20
+
+- Update `wasmtime@latest` to 19.0.0.
+
+## [2.29.1] - 2024-03-19
+
+- Update `cargo-minimal-versions@latest` to 0.1.27.
+
+## [2.29.0] - 2024-03-18
+
+- Support `git-cliff`. ([#411](https://github.com/taiki-e/install-action/pull/411), thanks @tranzystorekk)
+
+## [2.28.16] - 2024-03-17
+
+- Update `cargo-deny@latest` to 0.14.17.
+
+## [2.28.15] - 2024-03-16
+
+- Update `cargo-llvm-cov@latest` to 0.6.8.
+
+## [2.28.14] - 2024-03-13
+
+- Update `protoc@latest` to 3.26.0.
+
+## [2.28.13] - 2024-03-13
+
+- Update `wasmtime@latest` to 18.0.3.
+
+## [2.28.12] - 2024-03-12
+
+- Update `biome@latest` to 1.6.1.
+
+## [2.28.11] - 2024-03-11
+
+- Update `just@latest` to 1.25.2.
+
+## [2.28.10] - 2024-03-10
+
+- Update `cargo-udeps@latest` to 0.1.47.
+
+## [2.28.9] - 2024-03-10
+
+- Update `cargo-llvm-cov@latest` to 0.6.7.
+
+## [2.28.8] - 2024-03-10
+
+- Update `cargo-no-dev-deps@latest` to 0.2.12.
+
+- Update `cargo-minimal-versions@latest` to 0.1.26.
+
+- Update `cargo-hack@latest` to 0.6.22.
+
+- Update `cargo-binstall@latest` to 1.6.4.
+
+## [2.28.7] - 2024-03-09
+
+- Update `just@latest` to 1.25.0.
+
+## [2.28.6] - 2024-03-08
+
+- Update `biome@latest` to 1.6.0.
+
+## [2.28.5] - 2024-03-08
+
+- Update `shellcheck@latest` to 0.10.0.
+
+## [2.28.4] - 2024-03-06
+
+- Update `syft@latest` to 1.0.1.
+
+## [2.28.3] - 2024-03-06
+
+- Update `cargo-hack@latest` to 0.6.21.
+
+## [2.28.2] - 2024-03-06
+
+- Update `cargo-deny@latest` to 0.14.16.
+
+- Update `parse-changelog@latest` to 0.6.5.
+
+## [2.28.1] - 2024-03-04
+
+- Update `wasm-bindgen@latest` to 0.2.92.
+
+## [2.28.0] - 2024-03-02
+
+- Support `wasm-bindgen`. ([#383](https://github.com/taiki-e/install-action/pull/383), thanks @Ekleog)
+
+- Support `sccache`. ([#390](https://github.com/taiki-e/install-action/pull/390))
+
+## [2.27.15] - 2024-03-02
+
+- Support `biome` on x86_64/aarch64 Linux (musl).
+
+- Support `zola` on aarch64 macOS. (Previously x86_64 macOS binary is used as fallback.)
+
+## [2.27.14] - 2024-03-01
+
+- Update `syft@latest` to 1.0.0.
+
+## [2.27.13] - 2024-02-29
+
+- Update `wasmtime@latest` to 18.0.2.
+
+## [2.27.12] - 2024-02-28
+
+- Update `cargo-deny@latest` to 0.14.15.
+
+## [2.27.11] - 2024-02-26
+
+- Update `syft@latest` to 0.105.1.
+
+## [2.27.10] - 2024-02-26
+
+- Update `cargo-deny@latest` to 0.14.14.
+
+## [2.27.9] - 2024-02-24
+
+- Update `cargo-deny@latest` to 0.14.13.
+
+## [2.27.8] - 2024-02-23
+
+- Update `cargo-make@latest` to 0.37.10.
+
+## [2.27.7] - 2024-02-23
+
+- Update `cargo-deny@latest` to 0.14.12.
+
+## [2.27.6] - 2024-02-22
+
+- Update `cargo-llvm-cov@latest` to 0.6.6.
+
+## [2.27.5] - 2024-02-21
+
+- Update `cargo-machete@latest` to 0.6.1.
+
+## [2.27.4] - 2024-02-21
+
+- Update `cargo-hack@latest` to 0.6.20.
+
+## [2.27.3] - 2024-02-21
+
+- Update `wasmtime@latest` to 18.0.1.
+
+## [2.27.2] - 2024-02-16
+
+- Update `cargo-hack@latest` to 0.6.19.
+
+## [2.27.1] - 2024-02-16
+
+- Update `cargo-audit@latest` to 0.20.0.
+
+- Update `protoc@latest` to 3.25.3.
+
+## [2.27.0] - 2024-02-15
+
+- Support `cargo-audit`. ([#371](https://github.com/taiki-e/install-action/pull/371), thanks @utkarshgupta137)
+
+## [2.26.20] - 2024-02-15
+
+- Update `syft@latest` to 0.105.0.
+
+## [2.26.19] - 2024-02-13
+
+- Update `cargo-binstall@latest` to 1.6.3.
+
+## [2.26.18] - 2024-02-12
+
+- Update `just@latest` to 1.24.0.
+
+## [2.26.17] - 2024-02-11
+
+- Update `shfmt@latest` to 3.8.0.
+
+- Update `cargo-no-dev-deps@latest` to 0.2.11.
+
+- Update `cargo-minimal-versions@latest` to 0.1.25.
+
+- Update `cargo-hack@latest` to 0.6.18.
+
+## [2.26.16] - 2024-02-08
+
+- Update `wasmtime@latest` to 17.0.1.
+
+- Update `syft@latest` to 0.104.0.
+
+## [2.26.15] - 2024-02-07
+
+- Update `cargo-llvm-cov@latest` to 0.6.5.
+
+## [2.26.14] - 2024-02-07
+
+- Update `mdbook@latest` to 0.4.37.
+
+## [2.26.13] - 2024-02-05
+
+- Update `cargo-deny@latest` to 0.14.11.
+
+## [2.26.12] - 2024-02-04
+
+- Update `cargo-binstall@latest` to 1.6.2.
+
+## [2.26.11] - 2024-02-03
+
+- Update `cargo-hack@latest` to 0.6.17.
+
+## [2.26.10] - 2024-02-02
+
+- Update `cargo-make@latest` to 0.37.9.
+
+## [2.26.9] - 2024-02-01
+
+- Update `syft@latest` to 0.103.1.
+
+## [2.26.8] - 2024-01-31
+
+- Update `osv-scanner@latest` to 1.6.2.
+
+## [2.26.7] - 2024-01-26
+
+- Update `syft@latest` to 0.102.0.
+
+## [2.26.6] - 2024-01-26
+
+- Update `wasmtime@latest` to 17.0.0.
+
+## [2.26.5] - 2024-01-25
+
+- Update `cargo-llvm-cov@latest` to 0.6.4.
+
+## [2.26.4] - 2024-01-25
+
+- Update `cargo-make@latest` to 0.37.8.
+
+## [2.26.3] - 2024-01-24
+
+- Update `cargo-no-dev-deps@latest` to 0.2.10.
+
+- Update `cargo-minimal-versions@latest` to 0.1.24.
+
+- Update `cargo-hack@latest` to 0.6.16.
+
+- Update `cargo-deny@latest` to 0.14.10.
+
+## [2.26.2] - 2024-01-24
+
+- Update `cargo-llvm-cov@latest` to 0.6.3.
+
+## [2.26.1] - 2024-01-24
+
+- Update `cargo-deny@latest` to 0.14.9.
+
+## [2.26.0] - 2024-01-24
+
+- Support `cargo-sort`. ([#344](https://github.com/taiki-e/install-action/pull/344), thanks @jhpratt)
+
+## [2.25.11] - 2024-01-23
+
+- Update `cargo-deny@latest` to 0.14.8.
+
+## [2.25.10] - 2024-01-22
+
+- Update `cargo-deny@latest` to 0.14.7.
+
+- Update `biome@latest` to 1.5.3.
+
+## [2.25.9] - 2024-01-21
+
+- Update `cargo-deny@latest` to 0.14.6.
+
+## [2.25.8] - 2024-01-21
+
+- Update `cargo-binstall@latest` to 1.6.1.
+
+## [2.25.7] - 2024-01-20
+
+- Update `cargo-deny@latest` to 0.14.5.
+
+## [2.25.6] - 2024-01-20
+
+- Update `syft@latest` to 0.101.1.
+
+- Update `cargo-deny@latest` to 0.14.4.
+
+## [2.25.5] - 2024-01-18
+
+- Update `cargo-llvm-cov@latest` to 0.6.2.
+
+## [2.25.4] - 2024-01-18
+
+- Update `osv-scanner@latest` to 1.6.1.
+
+## [2.25.3] - 2024-01-18
+
+- Update `syft@latest` to 0.101.0.
+
+## [2.25.2] - 2024-01-15
+
+- Update `biome@latest` to 1.5.2.
+
+## [2.25.1] - 2024-01-14
+
+- Update `cargo-make@latest` to 0.37.7.
+
+## [2.25.0] - 2024-01-13
+
+- Update `cargo-tarpaulin@latest` to 0.27.3.
+
+- Update `cargo-make@latest` to 0.37.6.
+
+- Update `cargo-binstall@latest` to 1.6.0.
+
+## [2.24.4] - 2024-01-13
+
+- Update `just@latest` to 1.23.0.
+
+- Update `cargo-llvm-cov@latest` to 0.6.1.
+
+## [2.24.3] - 2024-01-10
+
+- Update `biome@latest` to 1.5.1.
+
+- Update `protoc@latest` to 3.25.2.
+
+## [2.24.2] - 2024-01-09
+
+- Update `just@latest` to 1.22.1.
+
+- Update `biome@latest` to 1.5.0.
+
+## [2.24.1] - 2024-01-07
+
+- Update `cargo-careful@latest` to 0.4.1.
+
+## [2.24.0] - 2024-01-07
+
+- Update `cargo-binstall@latest` to 1.5.0.
+
+## [2.23.9] - 2024-01-06
+
+- Update `syft@latest` to 0.100.0.
+
+## [2.23.8] - 2024-01-05
+
+- Update `just@latest` to 1.22.0.
+
+## [2.23.7] - 2023-12-30
+
+- Update `just@latest` to 1.21.0.
+
+## [2.23.6] - 2023-12-29
+
+- Update `just@latest` to 1.20.0.
+
+- Update `cargo-udeps@latest` to 0.1.45.
+
+## [2.23.5] - 2023-12-28
+
+- Update `cargo-llvm-cov@latest` to 0.6.0.
+
+## [2.23.4] - 2023-12-28
+
+- Update `just@latest` to 1.19.0.
+
+## [2.23.3] - 2023-12-26
+
+- Update `cargo-binstall@latest` to 1.4.9.
+
+## [2.23.2] - 2023-12-26
+
+- Update `dprint@latest` to 0.45.0.
+
+## [2.23.1] - 2023-12-25
+
+- Update `just@latest` to 1.18.1.
+
+## [2.23.0] - 2023-12-23
+
+- Support `cargo-export`. ([#312](https://github.com/taiki-e/install-action/pull/312), thanks @bazhenov)
+
+## [2.22.10] - 2023-12-21
+
+- Update `syft@latest` to 0.99.0.
+
+## [2.22.9] - 2023-12-21
+
+- Update `wasmtime@latest` to 16.0.0.
+
+## [2.22.8] - 2023-12-20
+
+- Update `just@latest` to 1.17.0.
+
+## [2.22.7] - 2023-12-19
+
+- Update `zola@latest` to 0.18.0.
+
+## [2.22.6] - 2023-12-18
+
+- Update `dprint@latest` to 0.44.0.
+
+## [2.22.5] - 2023-12-16
+
+- Update `cargo-no-dev-deps@latest` to 0.2.9.
+
+- Update `cargo-minimal-versions@latest` to 0.1.23.
+
+- Update `cargo-llvm-cov@latest` to 0.5.39.
+
+- Update `cargo-hack@latest` to 0.6.15.
+
+## [2.22.4] - 2023-12-16
+
+- Update `cargo-binstall@latest` to 1.4.8.
+
+## [2.22.3] - 2023-12-16
+
+- Update `cargo-make@latest` to 0.37.5.
+
+## [2.22.2] - 2023-12-14
+
+- Update `cargo-llvm-cov@latest` to 0.5.38.
+
+## [2.22.1] - 2023-12-12
+
+- Update `cargo-binstall@latest` to 1.4.7.
+
+## [2.22.0] - 2023-12-10
+
+- Support `osv-scanner`. ([#300](https://github.com/taiki-e/install-action/pull/300), thanks @jayvdb)
+
+## [2.21.27] - 2023-12-05
+
+- Update `cargo-no-dev-deps@latest` to 0.2.8.
+
+- Update `cargo-minimal-versions@latest` to 0.1.22.
+
+- Update `cargo-hack@latest` to 0.6.14.
+
+## [2.21.26] - 2023-12-02
+
+- Update `wasmtime@latest` to 15.0.1.
+
+## [2.21.25] - 2023-12-01
+
+- Update `dprint@latest` to 0.43.2.
+
+## [2.21.24] - 2023-12-01
+
+- Update `biome@latest` to 1.4.1.
+
+## [2.21.23] - 2023-11-30
+
+- Update `mdbook@latest` to 0.4.36.
+
+- Update `syft@latest` to 0.98.0.
+
+## [2.21.22] - 2023-11-28
+
+- Update `cargo-tarpaulin@latest` to 0.27.2.
+
+## [2.21.21] - 2023-11-28
+
+- Update `biome@latest` to 1.4.0.
+
+## [2.21.20] - 2023-11-27
+
+- Update `grcov@latest` to 0.8.19.
+
+## [2.21.19] - 2023-11-26
+
+- Update `dprint@latest` to 0.43.1.
+
 ## [2.21.18] - 2023-11-21
 
 - Update `wasmtime@latest` to 15.0.0.
@@ -1449,7 +1983,124 @@ Note: This release is considered a breaking change because installing on version
 
 Initial release
 
-[Unreleased]: https://github.com/taiki-e/install-action/compare/v2.21.18...HEAD
+[Unreleased]: https://github.com/taiki-e/install-action/compare/v2.32.1...HEAD
+[2.32.1]: https://github.com/taiki-e/install-action/compare/v2.32.0...v2.32.1
+[2.32.0]: https://github.com/taiki-e/install-action/compare/v2.31.3...v2.32.0
+[2.31.3]: https://github.com/taiki-e/install-action/compare/v2.31.2...v2.31.3
+[2.31.2]: https://github.com/taiki-e/install-action/compare/v2.31.1...v2.31.2
+[2.31.1]: https://github.com/taiki-e/install-action/compare/v2.31.0...v2.31.1
+[2.31.0]: https://github.com/taiki-e/install-action/compare/v2.30.0...v2.31.0
+[2.30.0]: https://github.com/taiki-e/install-action/compare/v2.29.8...v2.30.0
+[2.29.8]: https://github.com/taiki-e/install-action/compare/v2.29.7...v2.29.8
+[2.29.7]: https://github.com/taiki-e/install-action/compare/v2.29.6...v2.29.7
+[2.29.6]: https://github.com/taiki-e/install-action/compare/v2.29.5...v2.29.6
+[2.29.5]: https://github.com/taiki-e/install-action/compare/v2.29.4...v2.29.5
+[2.29.4]: https://github.com/taiki-e/install-action/compare/v2.29.3...v2.29.4
+[2.29.3]: https://github.com/taiki-e/install-action/compare/v2.29.2...v2.29.3
+[2.29.2]: https://github.com/taiki-e/install-action/compare/v2.29.1...v2.29.2
+[2.29.1]: https://github.com/taiki-e/install-action/compare/v2.29.0...v2.29.1
+[2.29.0]: https://github.com/taiki-e/install-action/compare/v2.28.16...v2.29.0
+[2.28.16]: https://github.com/taiki-e/install-action/compare/v2.28.15...v2.28.16
+[2.28.15]: https://github.com/taiki-e/install-action/compare/v2.28.14...v2.28.15
+[2.28.14]: https://github.com/taiki-e/install-action/compare/v2.28.13...v2.28.14
+[2.28.13]: https://github.com/taiki-e/install-action/compare/v2.28.12...v2.28.13
+[2.28.12]: https://github.com/taiki-e/install-action/compare/v2.28.11...v2.28.12
+[2.28.11]: https://github.com/taiki-e/install-action/compare/v2.28.10...v2.28.11
+[2.28.10]: https://github.com/taiki-e/install-action/compare/v2.28.9...v2.28.10
+[2.28.9]: https://github.com/taiki-e/install-action/compare/v2.28.8...v2.28.9
+[2.28.8]: https://github.com/taiki-e/install-action/compare/v2.28.7...v2.28.8
+[2.28.7]: https://github.com/taiki-e/install-action/compare/v2.28.6...v2.28.7
+[2.28.6]: https://github.com/taiki-e/install-action/compare/v2.28.5...v2.28.6
+[2.28.5]: https://github.com/taiki-e/install-action/compare/v2.28.4...v2.28.5
+[2.28.4]: https://github.com/taiki-e/install-action/compare/v2.28.3...v2.28.4
+[2.28.3]: https://github.com/taiki-e/install-action/compare/v2.28.2...v2.28.3
+[2.28.2]: https://github.com/taiki-e/install-action/compare/v2.28.1...v2.28.2
+[2.28.1]: https://github.com/taiki-e/install-action/compare/v2.28.0...v2.28.1
+[2.28.0]: https://github.com/taiki-e/install-action/compare/v2.27.15...v2.28.0
+[2.27.15]: https://github.com/taiki-e/install-action/compare/v2.27.14...v2.27.15
+[2.27.14]: https://github.com/taiki-e/install-action/compare/v2.27.13...v2.27.14
+[2.27.13]: https://github.com/taiki-e/install-action/compare/v2.27.12...v2.27.13
+[2.27.12]: https://github.com/taiki-e/install-action/compare/v2.27.11...v2.27.12
+[2.27.11]: https://github.com/taiki-e/install-action/compare/v2.27.10...v2.27.11
+[2.27.10]: https://github.com/taiki-e/install-action/compare/v2.27.9...v2.27.10
+[2.27.9]: https://github.com/taiki-e/install-action/compare/v2.27.8...v2.27.9
+[2.27.8]: https://github.com/taiki-e/install-action/compare/v2.27.7...v2.27.8
+[2.27.7]: https://github.com/taiki-e/install-action/compare/v2.27.6...v2.27.7
+[2.27.6]: https://github.com/taiki-e/install-action/compare/v2.27.5...v2.27.6
+[2.27.5]: https://github.com/taiki-e/install-action/compare/v2.27.4...v2.27.5
+[2.27.4]: https://github.com/taiki-e/install-action/compare/v2.27.3...v2.27.4
+[2.27.3]: https://github.com/taiki-e/install-action/compare/v2.27.2...v2.27.3
+[2.27.2]: https://github.com/taiki-e/install-action/compare/v2.27.1...v2.27.2
+[2.27.1]: https://github.com/taiki-e/install-action/compare/v2.27.0...v2.27.1
+[2.27.0]: https://github.com/taiki-e/install-action/compare/v2.26.20...v2.27.0
+[2.26.20]: https://github.com/taiki-e/install-action/compare/v2.26.19...v2.26.20
+[2.26.19]: https://github.com/taiki-e/install-action/compare/v2.26.18...v2.26.19
+[2.26.18]: https://github.com/taiki-e/install-action/compare/v2.26.17...v2.26.18
+[2.26.17]: https://github.com/taiki-e/install-action/compare/v2.26.16...v2.26.17
+[2.26.16]: https://github.com/taiki-e/install-action/compare/v2.26.15...v2.26.16
+[2.26.15]: https://github.com/taiki-e/install-action/compare/v2.26.14...v2.26.15
+[2.26.14]: https://github.com/taiki-e/install-action/compare/v2.26.13...v2.26.14
+[2.26.13]: https://github.com/taiki-e/install-action/compare/v2.26.12...v2.26.13
+[2.26.12]: https://github.com/taiki-e/install-action/compare/v2.26.11...v2.26.12
+[2.26.11]: https://github.com/taiki-e/install-action/compare/v2.26.10...v2.26.11
+[2.26.10]: https://github.com/taiki-e/install-action/compare/v2.26.9...v2.26.10
+[2.26.9]: https://github.com/taiki-e/install-action/compare/v2.26.8...v2.26.9
+[2.26.8]: https://github.com/taiki-e/install-action/compare/v2.26.7...v2.26.8
+[2.26.7]: https://github.com/taiki-e/install-action/compare/v2.26.6...v2.26.7
+[2.26.6]: https://github.com/taiki-e/install-action/compare/v2.26.5...v2.26.6
+[2.26.5]: https://github.com/taiki-e/install-action/compare/v2.26.4...v2.26.5
+[2.26.4]: https://github.com/taiki-e/install-action/compare/v2.26.3...v2.26.4
+[2.26.3]: https://github.com/taiki-e/install-action/compare/v2.26.2...v2.26.3
+[2.26.2]: https://github.com/taiki-e/install-action/compare/v2.26.1...v2.26.2
+[2.26.1]: https://github.com/taiki-e/install-action/compare/v2.26.0...v2.26.1
+[2.26.0]: https://github.com/taiki-e/install-action/compare/v2.25.11...v2.26.0
+[2.25.11]: https://github.com/taiki-e/install-action/compare/v2.25.10...v2.25.11
+[2.25.10]: https://github.com/taiki-e/install-action/compare/v2.25.9...v2.25.10
+[2.25.9]: https://github.com/taiki-e/install-action/compare/v2.25.8...v2.25.9
+[2.25.8]: https://github.com/taiki-e/install-action/compare/v2.25.7...v2.25.8
+[2.25.7]: https://github.com/taiki-e/install-action/compare/v2.25.6...v2.25.7
+[2.25.6]: https://github.com/taiki-e/install-action/compare/v2.25.5...v2.25.6
+[2.25.5]: https://github.com/taiki-e/install-action/compare/v2.25.4...v2.25.5
+[2.25.4]: https://github.com/taiki-e/install-action/compare/v2.25.3...v2.25.4
+[2.25.3]: https://github.com/taiki-e/install-action/compare/v2.25.2...v2.25.3
+[2.25.2]: https://github.com/taiki-e/install-action/compare/v2.25.1...v2.25.2
+[2.25.1]: https://github.com/taiki-e/install-action/compare/v2.25.0...v2.25.1
+[2.25.0]: https://github.com/taiki-e/install-action/compare/v2.24.4...v2.25.0
+[2.24.4]: https://github.com/taiki-e/install-action/compare/v2.24.3...v2.24.4
+[2.24.3]: https://github.com/taiki-e/install-action/compare/v2.24.2...v2.24.3
+[2.24.2]: https://github.com/taiki-e/install-action/compare/v2.24.1...v2.24.2
+[2.24.1]: https://github.com/taiki-e/install-action/compare/v2.24.0...v2.24.1
+[2.24.0]: https://github.com/taiki-e/install-action/compare/v2.23.9...v2.24.0
+[2.23.9]: https://github.com/taiki-e/install-action/compare/v2.23.8...v2.23.9
+[2.23.8]: https://github.com/taiki-e/install-action/compare/v2.23.7...v2.23.8
+[2.23.7]: https://github.com/taiki-e/install-action/compare/v2.23.6...v2.23.7
+[2.23.6]: https://github.com/taiki-e/install-action/compare/v2.23.5...v2.23.6
+[2.23.5]: https://github.com/taiki-e/install-action/compare/v2.23.4...v2.23.5
+[2.23.4]: https://github.com/taiki-e/install-action/compare/v2.23.3...v2.23.4
+[2.23.3]: https://github.com/taiki-e/install-action/compare/v2.23.2...v2.23.3
+[2.23.2]: https://github.com/taiki-e/install-action/compare/v2.23.1...v2.23.2
+[2.23.1]: https://github.com/taiki-e/install-action/compare/v2.23.0...v2.23.1
+[2.23.0]: https://github.com/taiki-e/install-action/compare/v2.22.10...v2.23.0
+[2.22.10]: https://github.com/taiki-e/install-action/compare/v2.22.9...v2.22.10
+[2.22.9]: https://github.com/taiki-e/install-action/compare/v2.22.8...v2.22.9
+[2.22.8]: https://github.com/taiki-e/install-action/compare/v2.22.7...v2.22.8
+[2.22.7]: https://github.com/taiki-e/install-action/compare/v2.22.6...v2.22.7
+[2.22.6]: https://github.com/taiki-e/install-action/compare/v2.22.5...v2.22.6
+[2.22.5]: https://github.com/taiki-e/install-action/compare/v2.22.4...v2.22.5
+[2.22.4]: https://github.com/taiki-e/install-action/compare/v2.22.3...v2.22.4
+[2.22.3]: https://github.com/taiki-e/install-action/compare/v2.22.2...v2.22.3
+[2.22.2]: https://github.com/taiki-e/install-action/compare/v2.22.1...v2.22.2
+[2.22.1]: https://github.com/taiki-e/install-action/compare/v2.22.0...v2.22.1
+[2.22.0]: https://github.com/taiki-e/install-action/compare/v2.21.27...v2.22.0
+[2.21.27]: https://github.com/taiki-e/install-action/compare/v2.21.26...v2.21.27
+[2.21.26]: https://github.com/taiki-e/install-action/compare/v2.21.25...v2.21.26
+[2.21.25]: https://github.com/taiki-e/install-action/compare/v2.21.24...v2.21.25
+[2.21.24]: https://github.com/taiki-e/install-action/compare/v2.21.23...v2.21.24
+[2.21.23]: https://github.com/taiki-e/install-action/compare/v2.21.22...v2.21.23
+[2.21.22]: https://github.com/taiki-e/install-action/compare/v2.21.21...v2.21.22
+[2.21.21]: https://github.com/taiki-e/install-action/compare/v2.21.20...v2.21.21
+[2.21.20]: https://github.com/taiki-e/install-action/compare/v2.21.19...v2.21.20
+[2.21.19]: https://github.com/taiki-e/install-action/compare/v2.21.18...v2.21.19
 [2.21.18]: https://github.com/taiki-e/install-action/compare/v2.21.17...v2.21.18
 [2.21.17]: https://github.com/taiki-e/install-action/compare/v2.21.16...v2.21.17
 [2.21.16]: https://github.com/taiki-e/install-action/compare/v2.21.15...v2.21.16

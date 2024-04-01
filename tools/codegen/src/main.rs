@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 
 use std::{
-    cmp::Reverse,
+    cmp::{self, Reverse},
     collections::{BTreeMap, BTreeSet},
     env,
     ffi::OsStr,
@@ -26,7 +26,7 @@ fn main() -> Result<()> {
     let args: Vec<_> = env::args().skip(1).collect();
     if args.is_empty() || args.iter().any(|arg| arg.starts_with('-')) {
         println!(
-            "USAGE: cargo run -p install-action-internal-codegen -r -- <PACKAGE> [VERSION_REQ]"
+            "USAGE: cargo run --manifest-path tools/codegen/Cargo.toml --release -- <PACKAGE> [VERSION_REQ]"
         );
         std::process::exit(1);
     }
@@ -41,6 +41,7 @@ fn main() -> Result<()> {
     let mut base_info: BaseManifest = serde_json::from_slice(&fs::read(
         workspace_root.join("tools/codegen/base").join(format!("{package}.json")),
     )?)?;
+    base_info.validate();
     let repo = base_info
         .repository
         .strip_prefix("https://github.com/")
@@ -80,8 +81,11 @@ fn main() -> Result<()> {
         .collect();
 
     let mut crates_io_info = None;
-    base_info.rust_crate =
-        base_info.rust_crate.as_ref().map(|s| replace_vars(s, package, None, None)).transpose()?;
+    base_info.rust_crate = base_info
+        .rust_crate
+        .as_ref()
+        .map(|s| replace_vars(s, package, None, None, base_info.rust_crate.as_deref()))
+        .transpose()?;
     if let Some(crate_name) = &base_info.rust_crate {
         eprintln!("downloading crate info from https://crates.io/api/v1/crates/{crate_name}");
         crates_io_info = Some(
@@ -113,7 +117,10 @@ fn main() -> Result<()> {
                         for (platform, d) in &mut manifest.download_info {
                             let template = &template.download_info[platform];
                             d.url = Some(template.url.replace("${version}", version));
-                            d.bin = template.bin.as_ref().map(|s| s.replace("${version}", version));
+                            d.bin = template
+                                .bin
+                                .as_ref()
+                                .map(|s| s.map(|s| s.replace("${version}", version)));
                         }
                     }
                 }
@@ -182,7 +189,15 @@ fn main() -> Result<()> {
                 .with_context(|| format!("asset_name is needed for {package} on {platform:?}"))?
                 .as_slice()
                 .iter()
-                .map(|asset_name| replace_vars(asset_name, package, Some(version), Some(platform)))
+                .map(|asset_name| {
+                    replace_vars(
+                        asset_name,
+                        package,
+                        Some(version),
+                        Some(platform),
+                        base_info.rust_crate.as_deref(),
+                    )
+                })
                 .collect::<Result<Vec<_>>>()?;
             let (url, asset_name) = match asset_names.iter().find_map(|asset_name| {
                 release
@@ -299,12 +314,18 @@ fn main() -> Result<()> {
             download_info.insert(platform, ManifestDownloadInfo {
                 url: Some(url),
                 checksum: hash,
-                bin: base_download_info
-                    .bin
-                    .as_ref()
-                    .or(base_info.bin.as_ref())
-                    .map(|s| replace_vars(s, package, Some(version), Some(platform)))
-                    .transpose()?,
+                bin: base_download_info.bin.as_ref().or(base_info.bin.as_ref()).map(|s| {
+                    s.map(|s| {
+                        replace_vars(
+                            s,
+                            package,
+                            Some(version),
+                            Some(platform),
+                            base_info.rust_crate.as_deref(),
+                        )
+                        .unwrap()
+                    })
+                }),
             });
             buf.clear();
         }
@@ -355,6 +376,9 @@ fn main() -> Result<()> {
                     }
                 }
             }
+            if base_info.broken.contains(version) {
+                continue;
+            }
             if !(version.major == 0 && version.minor == 0) {
                 manifests.map.insert(
                     Reverse(Version::omitted(version.major, Some(version.minor))),
@@ -388,6 +412,18 @@ fn main() -> Result<()> {
         unreachable!()
     };
     for &p in base_info.platform.keys() {
+        if !manifests
+            .map
+            .values()
+            .any(|m| matches!(m, ManifestRef::Real(m) if m.download_info.contains_key(&p)))
+        {
+            // TODO: better error message: https://github.com/taiki-e/install-action/pull/411
+            bail!(
+                "platform list in base manifest for {package} contains {p:?}, \
+                 but result manifest doesn't contain it; \
+                 consider removing {p:?} from platform list in base manifest"
+            );
+        }
         if latest_manifest.download_info.contains_key(&p) {
             continue;
         }
@@ -403,7 +439,8 @@ fn main() -> Result<()> {
         }
         bail!(
             "platform list in base manifest for {package} contains {p:?}, \
-             but latest release ({latest_version}) doesn't contain it"
+             but latest release ({latest_version}) doesn't contain it; \
+             consider marking {latest_version} as broken by adding 'broken' field to base manifest"
         );
     }
 
@@ -417,7 +454,7 @@ fn main() -> Result<()> {
         let t = template.as_mut().unwrap();
         for (platform, d) in &mut manifest.download_info {
             let template_url = d.url.take().unwrap().replace(version, "${version}");
-            let template_bin = d.bin.take().map(|s| s.replace(version, "${version}"));
+            let template_bin = d.bin.take().map(|s| s.map(|s| s.replace(version, "${version}")));
             if let Some(d) = t.download_info.get(platform) {
                 if template_url != d.url || template_bin != d.bin {
                     template = None;
@@ -458,18 +495,33 @@ fn replace_vars(
     package: &str,
     version: Option<&str>,
     platform: Option<HostPlatform>,
+    rust_crate: Option<&str>,
 ) -> Result<String> {
+    const RUST_SPECIFIC: &[(&str, fn(HostPlatform) -> &'static str)] = &[
+        ("${rust_target}", HostPlatform::rust_target),
+        ("${rust_target_arch}", HostPlatform::rust_target_arch),
+        ("${rust_target_os}", HostPlatform::rust_target_os),
+    ];
     let mut s = s.replace("${package}", package).replace("${tool}", package);
     if let Some(platform) = platform {
-        s = s
-            .replace("${rust_target}", platform.rust_target())
-            .replace("${os_name}", platform.os_name())
-            .replace("${exe}", platform.exe_suffix());
+        s = s.replace("${exe}", platform.exe_suffix());
+        if rust_crate.is_some() {
+            for &(var, f) in RUST_SPECIFIC {
+                s = s.replace(var, f(platform));
+            }
+        }
     }
     if let Some(version) = version {
         s = s.replace("${version}", version);
     }
     if s.contains('$') {
+        for &(var, _) in RUST_SPECIFIC {
+            if s.contains(var) {
+                bail!(
+                    "base manifest for {package} refers {var}, but 'rust_crate' field is not set"
+                );
+            }
+        }
         bail!("variable not fully replaced: '{s}'");
     }
     Ok(s)
@@ -478,6 +530,7 @@ fn replace_vars(
 fn download(url: &str) -> Result<ureq::Response> {
     let mut token = env::var("GITHUB_TOKEN").ok().filter(|v| !v.is_empty());
     let mut retry = 0;
+    let max_retry = 6;
     let mut last_error;
     loop {
         let mut req = ureq::get(url);
@@ -488,14 +541,14 @@ fn download(url: &str) -> Result<ureq::Response> {
             Ok(res) => return Ok(res),
             Err(e) => last_error = Some(e),
         }
-        if retry == 5 && token.is_some() {
+        if retry == max_retry / 2 && token.is_some() {
             token = None;
         }
         retry += 1;
-        if retry > 10 {
+        if retry > max_retry {
             break;
         }
-        eprintln!("download failed; retrying ({retry}/10)");
+        eprintln!("download failed; retrying after {}s ({retry}/{max_retry})", retry * 2);
         std::thread::sleep(Duration::from_secs(retry * 2));
     }
     Err(last_error.unwrap().into())
@@ -551,12 +604,12 @@ impl From<semver::Version> for Version {
     }
 }
 impl PartialOrd for Version {
-    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+    fn partial_cmp(&self, other: &Self) -> Option<cmp::Ordering> {
         Some(self.cmp(other))
     }
 }
 impl Ord for Version {
-    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+    fn cmp(&self, other: &Self) -> cmp::Ordering {
         fn convert(v: &Version) -> semver::Version {
             semver::Version {
                 major: v.major.unwrap_or(u64::MAX),
@@ -661,9 +714,9 @@ struct ManifestDownloadInfo {
     #[serde(skip_serializing_if = "Option::is_none")]
     url: Option<String>,
     checksum: String,
-    /// Default to ${tool}${exe}
+    /// Path to binaries in archive. Default to `${tool}${exe}`.
     #[serde(skip_serializing_if = "Option::is_none")]
-    bin: Option<String>,
+    bin: Option<StringOrArray>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -675,9 +728,9 @@ struct ManifestTemplate {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct ManifestTemplateDownloadInfo {
     url: String,
-    /// Default to ${tool}${exe}
+    /// Path to binaries in archive. Default to `${tool}${exe}`.
     #[serde(skip_serializing_if = "Option::is_none")]
-    bin: Option<String>,
+    bin: Option<StringOrArray>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -692,11 +745,29 @@ struct BaseManifest {
     default_major_version: Option<String>,
     /// Asset name patterns.
     asset_name: Option<StringOrArray>,
-    /// Path to binary in archive. Default to `${tool}${exe}`.
-    bin: Option<String>,
+    /// Path to binaries in archive. Default to `${tool}${exe}`.
+    bin: Option<StringOrArray>,
     signing: Option<Signing>,
+    #[serde(default)]
+    broken: Vec<semver::Version>,
     platform: BTreeMap<HostPlatform, BaseManifestPlatformInfo>,
     version_range: Option<String>,
+}
+impl BaseManifest {
+    fn validate(&self) {
+        for bin in self.bin.iter().chain(self.platform.values().flat_map(|m| &m.bin)) {
+            assert!(!bin.as_slice().is_empty());
+            for bin in bin.as_slice() {
+                let file_name = Path::new(bin).file_name().unwrap().to_str().unwrap();
+                if !self.repository.ends_with("/xbuild") {
+                    assert!(
+                        !(file_name.contains("${version") || file_name.contains("${rust")),
+                        "{bin}"
+                    );
+                }
+            }
+        }
+    }
 }
 
 #[derive(Debug, Deserialize)]
@@ -720,11 +791,11 @@ enum SigningKind {
 struct BaseManifestPlatformInfo {
     /// Asset name patterns. Default to the value at `BaseManifest::asset_name`.
     asset_name: Option<StringOrArray>,
-    /// Path to binary in archive. Default to the value at `BaseManifest::bin`.
-    bin: Option<String>,
+    /// Path to binaries in archive. Default to the value at `BaseManifest::bin`.
+    bin: Option<StringOrArray>,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(untagged)]
 enum StringOrArray {
     String(String),
@@ -734,8 +805,14 @@ enum StringOrArray {
 impl StringOrArray {
     fn as_slice(&self) -> &[String] {
         match self {
-            Self::Array(v) => v,
             Self::String(s) => slice::from_ref(s),
+            Self::Array(v) => v,
+        }
+    }
+    fn map(&self, mut f: impl FnMut(&String) -> String) -> Self {
+        match self {
+            Self::String(s) => Self::String(f(s)),
+            Self::Array(v) => Self::Array(v.iter().map(f).collect()),
         }
     }
 }
@@ -783,7 +860,19 @@ impl HostPlatform {
             Self::aarch64_windows => "aarch64-pc-windows-msvc",
         }
     }
-    fn os_name(self) -> &'static str {
+    fn rust_target_arch(self) -> &'static str {
+        match self {
+            Self::aarch64_linux_gnu
+            | Self::aarch64_linux_musl
+            | Self::aarch64_macos
+            | Self::aarch64_windows => "aarch64",
+            Self::x86_64_linux_gnu
+            | Self::x86_64_linux_musl
+            | Self::x86_64_macos
+            | Self::x86_64_windows => "x86_64",
+        }
+    }
+    fn rust_target_os(self) -> &'static str {
         match self {
             Self::aarch64_linux_gnu
             | Self::aarch64_linux_musl

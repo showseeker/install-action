@@ -1,5 +1,5 @@
 {
-  "rust_crate": null,
+  "rust_crate": "cargo-rdme",
   "template": {
     "x86_64_linux_musl": {
       "url": "https://github.com/orium/cargo-rdme/releases/download/v${version}/cargo-rdme_v${version}_x86_64-unknown-linux-musl.tar.bz2"
@@ -19,6 +19,11 @@
   },
   "1.4": {
     "version": "1.4.2"
+  },
+  "1.4.3": {
+    "x86_64_windows": {
+      "checksum": "408ffb657c99bf4142521632306edc4ed130dd991a0cd4b62cf370c28b307daf"
+    }
   },
   "1.4.2": {
     "x86_64_linux_musl": {

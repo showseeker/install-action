@@ -15,7 +15,8 @@ trap 's=$?; echo >&2 "$0: error on line "${LINENO}": ${BASH_COMMAND}"; exit ${s}
 # - shfmt
 # - shellcheck
 # - npm
-# - jq and yq
+# - jq
+# - python
 # - rustup (if Rust code exists)
 # - clang-format (if C/C++ code exists)
 #
@@ -52,6 +53,11 @@ error() {
         echo >&2 "error: $*"
     fi
     should_fail=1
+}
+venv() {
+    local bin="$1"
+    shift
+    "${venv_bin}/${bin}${exe}" "$@"
 }
 
 if [[ $# -gt 0 ]]; then
@@ -91,6 +97,7 @@ if [[ -n "$(git ls-files '*.rs')" ]]; then
         error "please replace \`.cast()\` with \`.cast::<type_name>()\`:"
         echo "${cast_without_turbofish}"
     fi
+    # Sync readme and crate-level doc.
     first='1'
     for readme in $(git ls-files '*README.md'); do
         if ! grep -q '^<!-- tidy:crate-doc:start -->' "${readme}"; then
@@ -115,8 +122,9 @@ if [[ -n "$(git ls-files '*.rs')" ]]; then
         echo "${new}" >"${lib}"
         check_diff "${lib}"
     done
-    # Make sure that public Rust crates don't contain executables.
-    failed_files=''
+    # Make sure that public Rust crates don't contain executables and binaries.
+    executables=''
+    binaries=''
     metadata=$(cargo metadata --format-version=1 --no-deps)
     has_public_crate=''
     for id in $(jq <<<"${metadata}" '.workspace_members[]'); do
@@ -133,7 +141,7 @@ if [[ -n "$(git ls-files '*.rs')" ]]; then
         has_public_crate='1'
     done
     if [[ -n "${has_public_crate}" ]]; then
-        info "checking file permissions"
+        info "checking public crates don't contain executables and binaries"
         if [[ -f Cargo.toml ]]; then
             root_manifest=$(cargo locate-project --message-format=plain --manifest-path Cargo.toml)
             root_pkg=$(jq <<<"${metadata}" ".packages[] | select(.manifest_path == \"${root_manifest}\")")
@@ -160,13 +168,24 @@ if [[ -n "$(git ls-files '*.rs')" ]]; then
                 .* | tools/*) continue ;;
             esac
             if [[ -x "${p}" ]]; then
-                failed_files+="${p}"$'\n'
+                executables+="${p}"$'\n'
+            fi
+            # Use diff instead of file because file treats an empty file as a binary
+            # https://unix.stackexchange.com/questions/275516/is-there-a-convenient-way-to-classify-files-as-binary-or-text#answer-402870
+            if (diff .gitattributes "${p}" || true) | grep -q '^Binary file'; then
+                binaries+="${p}"$'\n'
             fi
         done
-        if [[ -n "${failed_files}" ]]; then
-            error "file-permissions-check failed: executable should be in tools/ directory"
+        if [[ -n "${executables}" ]]; then
+            error "file-permissions-check failed: executables are only allowed to be present in directories that are excluded from crates.io"
             echo "======================================="
-            echo -n "${failed_files}"
+            echo -n "${executables}"
+            echo "======================================="
+        fi
+        if [[ -n "${binaries}" ]]; then
+            error "file-permissions-check failed: binaries are only allowed to be present in directories that are excluded from crates.io"
+            echo "======================================="
+            echo -n "${binaries}"
             echo "======================================="
         fi
     fi
@@ -203,38 +222,75 @@ if [[ -n "$(git ls-files '*.yml' '*.js' '*.json')" ]]; then
     # Check GitHub workflows.
     if [[ -d .github/workflows ]]; then
         info "checking GitHub workflows"
-        if type -P jq &>/dev/null && type -P yq &>/dev/null; then
-            for workflow in .github/workflows/*.yml; do
-                # The top-level permissions must be weak as they are referenced by all jobs.
-                permissions=$(yq -c '.permissions' "${workflow}")
-                case "${permissions}" in
-                    '{"contents":"read"}' | '{"contents":"none"}') ;;
-                    null) error "${workflow}: top level permissions not found; it must be 'contents: read' or weaker permissions" ;;
-                    *) error "${workflow}: only 'contents: read' and weaker permissions are allowed at top level; if you want to use stronger permissions, please set job-level permissions" ;;
-                esac
-                # Make sure the 'needs' section is not out of date.
-                if grep -q '# tidy:needs' "${workflow}" && ! grep -Eq '# *needs: \[' "${workflow}"; then
-                    # shellcheck disable=SC2207
-                    jobs_actual=($(yq '.jobs' "${workflow}" | jq -r 'keys_unsorted[]'))
-                    unset 'jobs_actual[${#jobs_actual[@]}-1]'
-                    # shellcheck disable=SC2207
-                    jobs_expected=($(yq -r '.jobs."ci-success".needs[]' "${workflow}"))
-                    if [[ "${jobs_actual[*]}" != "${jobs_expected[*]+"${jobs_expected[*]}"}" ]]; then
-                        printf -v jobs '%s, ' "${jobs_actual[@]}"
-                        sed -i "s/needs: \[.*\] # tidy:needs/needs: [${jobs%, }] # tidy:needs/" "${workflow}"
-                        check_diff "${workflow}"
-                        error "${workflow}: please update 'needs' section in 'ci-success' job"
-                    fi
+        if type -P jq &>/dev/null; then
+            if type -P python3 &>/dev/null || type -P python &>/dev/null; then
+                py_suffix=''
+                if type -P python3 &>/dev/null; then
+                    py_suffix='3'
                 fi
-            done
+                exe=''
+                venv_bin='.venv/bin'
+                case "$(uname -s)" in
+                    MINGW* | MSYS* | CYGWIN* | Windows_NT)
+                        exe='.exe'
+                        venv_bin='.venv/Scripts'
+                        ;;
+                esac
+                if [[ ! -d .venv ]]; then
+                    "python${py_suffix}" -m venv .venv
+                fi
+                if [[ ! -e "${venv_bin}/yq${exe}" ]]; then
+                    venv "pip${py_suffix}" install yq
+                fi
+                for workflow in .github/workflows/*.yml; do
+                    # The top-level permissions must be weak as they are referenced by all jobs.
+                    permissions=$(venv yq -c '.permissions' "${workflow}")
+                    case "${permissions}" in
+                        '{"contents":"read"}' | '{"contents":"none"}') ;;
+                        null) error "${workflow}: top level permissions not found; it must be 'contents: read' or weaker permissions" ;;
+                        *) error "${workflow}: only 'contents: read' and weaker permissions are allowed at top level; if you want to use stronger permissions, please set job-level permissions" ;;
+                    esac
+                    # Make sure the 'needs' section is not out of date.
+                    if grep -q '# tidy:needs' "${workflow}" && ! grep -Eq '# *needs: \[' "${workflow}"; then
+                        # shellcheck disable=SC2207
+                        jobs_actual=($(venv yq '.jobs' "${workflow}" | jq -r 'keys_unsorted[]'))
+                        unset 'jobs_actual[${#jobs_actual[@]}-1]'
+                        # shellcheck disable=SC2207
+                        jobs_expected=($(venv yq -r '.jobs."ci-success".needs[]' "${workflow}"))
+                        if [[ "${jobs_actual[*]}" != "${jobs_expected[*]+"${jobs_expected[*]}"}" ]]; then
+                            printf -v jobs '%s, ' "${jobs_actual[@]}"
+                            sed -i "s/needs: \[.*\] # tidy:needs/needs: [${jobs%, }] # tidy:needs/" "${workflow}"
+                            check_diff "${workflow}"
+                            error "${workflow}: please update 'needs' section in 'ci-success' job"
+                        fi
+                    fi
+                done
+            else
+                warn "'python3' is not installed; skipped GitHub workflow check"
+            fi
         else
-            warn "'jq' or 'yq' is not installed; skipped GitHub workflow check"
+            warn "'jq' is not installed; skipped GitHub workflow check"
         fi
     fi
 fi
 if [[ -n "$(git ls-files '*.yaml')" ]]; then
     error "please use '.yml' instead of '.yaml' for consistency"
     git ls-files '*.yaml'
+fi
+
+# TOML (if exists)
+if [[ -n "$(git ls-files '*.toml')" ]]; then
+    info "checking TOML style"
+    if [[ ! -e .taplo.toml ]]; then
+        warn "could not found .taplo.toml in the repository root"
+    fi
+    if type -P npm &>/dev/null; then
+        echo "+ npx -y @taplo/cli fmt \$(git ls-files '*.toml')"
+        npx -y @taplo/cli fmt $(git ls-files '*.toml')
+        check_diff $(git ls-files '*.toml')
+    else
+        warn "'npm' is not installed; skipped TOML style check"
+    fi
 fi
 
 # Markdown (if exists)
@@ -350,7 +406,7 @@ if [[ -f .cspell.json ]]; then
             dependencies=$(sed <<<"${dependencies}" 's/[0-9_-]/\n/g' | LC_ALL=C sort -f -u)
         fi
         config_old=$(<.cspell.json)
-        config_new=$(grep <<<"${config_old}" -v ' *//' | jq 'del(.dictionaries[] | select(index("organization-dictionary") | not))' | jq 'del(.dictionaryDefinitions[] | select(.name == "organization-dictionary" | not))')
+        config_new=$(grep <<<"${config_old}" -v '^ *//' | jq 'del(.dictionaries[] | select(index("organization-dictionary") | not))' | jq 'del(.dictionaryDefinitions[] | select(.name == "organization-dictionary" | not))')
         trap -- 'echo "${config_old}" >.cspell.json; echo >&2 "$0: trapped SIGINT"; exit 1' SIGINT
         echo "${config_new}" >.cspell.json
         if [[ -n "${has_rust}" ]]; then

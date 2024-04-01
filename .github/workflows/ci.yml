@@ -10,7 +10,7 @@ on:
       - main
       - dev
   schedule:
-    - cron: '0 0,6,12,18 * * *'
+    - cron: '0 0,3,6,9,12,15,18,21 * * *'
   workflow_dispatch:
 
 env:
@@ -47,17 +47,15 @@ jobs:
             tool: major.minor
           - os: ubuntu-22.04
             tool: major
-          - os: macos-11
           - os: macos-12
           - os: macos-13
+          - os: macos-14
           - os: windows-2019
           - os: windows-2022
     runs-on: ${{ matrix.os }}
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v4
-        with:
-          persist-credentials: false
+      - uses: taiki-e/checkout-action@v1
       # cross attempts to install rust-src when Cargo.toml is available even if `cross --version`
       - run: rm Cargo.toml
       - name: Generate tool list
@@ -111,7 +109,7 @@ jobs:
           - almalinux:9 # glibc 2.34
           - almalinux:9-minimal # glibc 2.34
           - centos:7 # glibc 2.17
-          - alpine:latest # musl 1.2.4 (as of alpine 3.18)
+          - alpine:latest # musl 1.2.4 (as of alpine 3.19)
     runs-on: ubuntu-latest
     timeout-minutes: 60
     container: ${{ matrix.container }}
@@ -125,10 +123,6 @@ jobs:
       - name: Install requirements (fedora/almalinux/centos)
         run: |
           set -eEuxo pipefail
-          if ! type -P dnf &>/dev/null && type -P microdnf &>/dev/null; then
-            # tar and gzip are required for actions/checkout on *-minimal images
-            microdnf install -y tar gzip
-          fi
           curl --proto '=https' --tlsv1.2 -fsSL --retry 10 https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain stable --no-modify-path
           echo "$HOME/.cargo/bin" >>"${GITHUB_PATH}"
         if: startsWith(matrix.container, 'fedora') || startsWith(matrix.container, 'almalinux') ||  startsWith(matrix.container, 'centos')
@@ -136,9 +130,7 @@ jobs:
         run: apk --no-cache add bash cargo
         shell: sh
         if: startsWith(matrix.container, 'alpine')
-      - uses: actions/checkout@v3 # TODO: actions/checkout@v4 requires glibc 2.28+
-        with:
-          persist-credentials: false
+      - uses: taiki-e/checkout-action@v1
       # cross attempts to install rust-src when Cargo.toml is available even if `cross --version`
       - run: rm Cargo.toml
       - name: Generate tool list
@@ -153,9 +145,7 @@ jobs:
     timeout-minutes: 60
     container: ubuntu:22.04
     steps:
-      - uses: actions/checkout@v4
-        with:
-          persist-credentials: false
+      - uses: taiki-e/checkout-action@v1
       - name: Generate tool list
         id: tool-list
         run: tools/ci/tool-list.sh >>"${GITHUB_OUTPUT}"
@@ -170,9 +160,7 @@ jobs:
       contents: write
       pull-requests: write
     steps:
-      - uses: actions/checkout@v4
-        with:
-          persist-credentials: false
+      - uses: taiki-e/checkout-action@v1
       - name: Install Rust
         run: rustup toolchain add nightly --no-self-update && rustup default nightly
       - run: tools/manifest.sh
@@ -183,7 +171,7 @@ jobs:
         if: github.repository_owner == 'taiki-e' && (github.event_name == 'schedule' || github.event_name == 'push' && github.ref == 'refs/heads/main')
       - name: Create PR
         id: create-pull-request
-        uses: peter-evans/create-pull-request@v5
+        uses: peter-evans/create-pull-request@v6
         with:
           title: Update manifest
           body: |

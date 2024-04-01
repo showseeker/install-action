@@ -1,6 +1,8 @@
 almalinux
+bindgen
 binstall
 coreutils
+cyclonedx
 distro
 doas
 dprint
@@ -8,7 +10,6 @@ enablerepo
 endgroup
 epel
 grcov
-incompat
 linkcheck
 mdbook
 microdnf
@@ -18,7 +19,7 @@ pubkey
 pwsh
 quickinstall
 rdme
-shellcheck
+sccache
 shfmt
 syft
 udeps
